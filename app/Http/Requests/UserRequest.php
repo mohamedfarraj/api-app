@@ -22,8 +22,7 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => request()->route('user') 
-                ?'nullable' :'required|string|max:255',
+            'name' => 'required|string|max:255',
             'username' => request()->route('user') 
                 ?'required|string|max:255|unique:users,username,' . request()->route('user') 
                 :'required|string|max:255|unique:users,username',

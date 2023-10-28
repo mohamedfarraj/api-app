@@ -53,6 +53,13 @@ class UserRepository implements UserInterface
             $user->name = $request->name;
             $user->type = $request->type;
 
+            if (!$id) {
+                // upload Avatar file
+                $avatar_path = $request->file('avatar')->store('avatar', 'public');
+                $user->avatar = $avatar_path;
+            }
+
+                  
             // Remove a whitespace and make to lowercase
             $user->email = preg_replace('/\s+/', '', strtolower($request->email));
             
