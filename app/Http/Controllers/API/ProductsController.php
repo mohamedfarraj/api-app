@@ -30,6 +30,17 @@ class ProductsController extends Controller
     }
 
     /**
+     * Display a listing By User Type.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllProductsByUserType()
+    {
+        return $this->productsInterface->getAllProductsByUserType();
+    }
+
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\ProductsRequest  $request

@@ -57,6 +57,8 @@ class UserRepository implements UserInterface
                 // upload Avatar file
                 $avatar_path = $request->file('avatar')->store('avatar', 'public');
                 $user->avatar = $avatar_path;
+            } else {
+                $product->is_active = $request->is_active;
             }
 
                   

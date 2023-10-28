@@ -12,7 +12,7 @@ trait ResponseAPI
      * @param   integer         $statusCode  
      * @param   boolean         $isSuccess
      */
-    public function coreResponse($message, $data = null, $statusCode, $isSuccess = true)
+    public function coreResponse($message, $data = null, $statusCode = 200, $isSuccess = true)
     {
         // Check the params
         if(!$message) return response()->json(['message' => 'Message is required'], 500);
@@ -22,15 +22,15 @@ trait ResponseAPI
             return response()->json([
                 'message' => $message,
                 'error' => false,
-                'code' => $statusCode,
+                'code' => +$statusCode,
                 'results' => $data
-            ], $statusCode);
+            ], +$statusCode);
         } else {
             return response()->json([
                 'message' => $message,
                 'error' => true,
-                'code' => $statusCode,
-            ], $statusCode);
+                'code' => +$statusCode,
+            ], +$statusCode);
         }
     }
 

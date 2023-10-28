@@ -15,6 +15,14 @@ interface ProductsInterface
     public function getAllProducts();
 
     /**
+     * Get all products for user by type
+     * 
+     * @method  GET api/products/byUserType
+     * @access  public
+     */
+    public function getAllProductsByUserType();
+
+    /**
      * Get Products By ID
      * 
      * @param   integer     $id

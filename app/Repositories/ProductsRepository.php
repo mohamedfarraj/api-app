@@ -6,6 +6,9 @@ use App\Http\Requests\ProductsRequest;
 use App\Interfaces\ProductsInterface;
 use App\Traits\ResponseAPI;
 use App\Models\Products;
+use App\Models\Policyprice;
+use Illuminate\Support\Facades\Auth;
+
 use DB;
 
 class ProductsRepository implements ProductsInterface
@@ -16,7 +19,25 @@ class ProductsRepository implements ProductsInterface
     public function getAllProducts()
     {
         try {
-            $products = Products::all();
+            $products = Products::get();
+            return $this->success("All Products", $products);
+        } catch(\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+
+    public function getAllProductsByUserType()
+    {
+        try {
+            $products = Products::whereRelation('prices','type',Auth::user()->type)
+            ->with(["prices" => function($q){
+                $q->where('type', '=', Auth::user()->type);
+            }])
+            ->withSum(["prices as price" => function($q){
+                $q->where('type', '=', Auth::user()->type);
+            }],'price')
+            ->get();
             return $this->success("All Products", $products);
         } catch(\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -26,7 +47,13 @@ class ProductsRepository implements ProductsInterface
     public function getProductsById($id)
     {
         try {
-            $product = Products::find($id);
+            $product = Products::whereRelation('prices','type',Auth::user()->type)
+            ->with(["prices" => function($q){
+                $q->where('type', '=', Auth::user()->type);
+            }])
+            ->withSum(["prices as price" => function($q){
+                $q->where('type', '=', Auth::user()->type);
+            }],'price')->find($id);
             
             // Check the product
             if(!$product) return $this->error("No product with ID $id", 404);
@@ -51,19 +78,33 @@ class ProductsRepository implements ProductsInterface
 
             $product->name = $request->name;
             $product->description = $request->description;
-            $product->type = $request->type;
             $product->slug = $request->slug;
-            $product->price = $request->price;
-            $product->is_active = $request->is_active;
-
+            
             if (!$id) {
                 // upload Image file
-                $product_path = $request->file('image')->store('image', 'public');
-                $product->image = $product_path;
+                $image_path = $request->file('image')->store('image', 'public');
+                $product->image = $image_path;
+            } else {
+                $product->is_active = $request->is_active;
             }
+           
+            
             // Save the product
             $product->save();
+            
+            if (!$id) {
+                $nid = $product->id;
+                foreach (json_decode($request->prices) as $price) {
+                    $p =new Policyprice;
+                    $p->price = $price->price;
+                    $p->type = $price->type;
+                    $p->product_id = $nid;
+                    $p->save();
+                }
+            }
 
+            
+            
             DB::commit();
             return $this->success(
                 $id ? "Products updated"

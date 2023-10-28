@@ -30,4 +30,6 @@ Route::controller(AuthController::class)->group(function () {
 Route::middleware('auth:sanctum')->group( function () {
     Route::resource('users', UserController::class);
     Route::resource('products', ProductsController::class);
+    Route::post('/products/byUserType', [ProductsController::class, 'getAllProductsByUserType']);
+
 });

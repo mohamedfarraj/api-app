@@ -24,9 +24,8 @@ class ProductsRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => request()->route('products') 
+            'image' => request()->route('product') 
                  ?'nullable' : 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-            'price'=> 'required',
             'slug'=> 'required'
         ];
     }
