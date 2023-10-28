@@ -3,12 +3,12 @@
 namespace App\Repositories;
 
 use App\Http\Requests\UserRequest;
-use App\Interfaces\UsersInterface;
+use App\Interfaces\UserInterface;
 use App\Traits\ResponseAPI;
 use App\Models\User;
 use DB;
 
-class UserRepository implements UsersInterface
+class UserRepository implements UserInterface
 {
     // Use ResponseAPI Trait in this repository
     use ResponseAPI;
@@ -49,7 +49,10 @@ class UserRepository implements UsersInterface
             // Check the user 
             if($id && !$user) return $this->error("No user with ID $id", 404);
 
+            $user->username = $request->username;
             $user->name = $request->name;
+            $user->type = $request->type;
+
             // Remove a whitespace and make to lowercase
             $user->email = preg_replace('/\s+/', '', strtolower($request->email));
             

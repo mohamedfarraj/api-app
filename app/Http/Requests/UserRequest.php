@@ -11,7 +11,7 @@ class UserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,20 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => request()->route('user') 
+                ?'nullable' :'required|string|max:255',
+            'username' => request()->route('user') 
+                ?'required|string|max:255|unique:users,username,' . request()->route('user') 
+                :'required|string|max:255|unique:users,username',
+            'email' => request()->route('user') 
+                ?'required|string|email|max:255|unique:users,email,' . request()->route('user') :
+                'required|string|email|max:255|unique:users,email',
+            'password' =>request()->route('user') 
+                ?'nullable' :  'required|string|min:6',
+            'avatar' => request()->route('user') 
+                 ?'nullable' : 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'type'=>request()->route('user') 
+                ?'nullable' :  'required|in:normal,silver,gold'
         ];
     }
 }
