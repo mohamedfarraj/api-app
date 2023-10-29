@@ -66,6 +66,9 @@ class AuthRepository implements AuthInterface
                     ]
                 ];
                 return $this->success("User LogIn", $data,  200);
+            }else{
+                
+                return $this->error("User Not Found or Password Not Correct", 401);
             }
 
         } catch(\Exception $e) {
